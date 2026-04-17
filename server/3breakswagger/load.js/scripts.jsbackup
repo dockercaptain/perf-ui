@@ -1,0 +1,95 @@
+import http from "k6/http";
+import { group, check, sleep } from "k6";
+import { Trend } from "k6/metrics";
+
+const BASE_URL = "http://localhost:8081";
+const SLEEP_DURATION = 1; // seconds
+let xClientID = "my-client-id"; // <-- replace with a real client ID
+
+// Custom metric to record request duration with trace ID
+let traceDuration = new Trend("trace_duration");
+
+export let options = {
+  stages: [
+    { duration: "10s", target: 10 },
+    { duration: "5s", target: 20 },
+    { duration: "2s", target: 2 },
+  ],
+};
+
+function getTracingHeaders() {
+  let traceID = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+  let parentID = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+
+  return {
+    traceID,
+    parentID,
+    params: {
+      headers: {
+        "X-Client-ID": xClientID,
+        "Accept": "application/json",
+        "x-datadog-trace-id": traceID.toString(),
+        "x-datadog-parent-id": parentID.toString(),
+        "x-datadog-sampling-priority": "1", // 1 = keep, 0 = drop
+      },
+      tags: {
+        trace_id: traceID.toString(), // Attach trace ID as a tag
+      },
+    },
+  };
+}
+
+export default function () {
+  // --------- 1. Localhost /ok endpoint ---------
+  group("/ok", () => {
+    let { traceID, params } = getTracingHeaders();
+    let url = `${BASE_URL}/ok`;
+
+    let res = http.get(url, params);
+
+    traceDuration.add(res.timings.duration, { trace_id: traceID.toString() });
+
+    check(res, {
+      "status is 200": (r) => r.status === 200,
+    });
+
+    sleep(SLEEP_DURATION);
+  });
+
+  // --------- 2. Public GET endpoint ---------
+  group("GET test.k6.io", () => {
+    let { traceID, params } = getTracingHeaders();
+    let url = "https://test.k6.io/";
+
+    let res = http.get(url, params);
+
+    traceDuration.add(res.timings.duration, { trace_id: traceID.toString() });
+
+    check(res, {
+      "status is 200": (r) => r.status === 200,
+      "body has Welcome": (r) => r.body.includes("Welcome"),
+    });
+
+    sleep(SLEEP_DURATION);
+  });
+
+  // --------- 3. Public POST endpoint ---------
+  group("POST test.k6.io/post", () => {
+    let { traceID, params } = getTracingHeaders();
+    let url = "https://test.k6.io/post";
+
+    let payload = JSON.stringify({ message: "hello from k6" });
+    params.headers["Content-Type"] = "application/json";
+
+    let res = http.post(url, payload, params);
+
+    traceDuration.add(res.timings.duration, { trace_id: traceID.toString() });
+
+    check(res, {
+      "status is 200": (r) => r.status === 200,
+      "response contains JSON": (r) => r.body.includes("hello from k6"),
+    });
+
+    sleep(SLEEP_DURATION);
+  });
+}

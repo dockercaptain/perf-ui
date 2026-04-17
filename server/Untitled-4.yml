@@ -1,0 +1,5 @@
+./k6 run load.js/script.js   \
+--summary-trend-stats="avg,min,max,med,p(50),p(75),p(90),p(95),p(99)" \
+ --tag testid=my-test-2025-10-02-11:43am \
+   --out json=test.json \
+ -o timescaledb=postgresql://k6:k6@192.168.1.150:5432/k6

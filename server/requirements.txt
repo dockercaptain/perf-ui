@@ -1,0 +1,13 @@
+fastapi
+langchain
+opensearch-py
+pydantic
+typing
+uvicorn
+kubernetes
+fastapi
+langchain-google-genai
+google-generativeai
+boto3
+psycopg2-binary
+# conda install langchain

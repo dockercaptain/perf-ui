@@ -1,0 +1,219 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "This is a sample API using net/http",
+      "title": "My API",
+      "contact": {
+  
+      },
+      "version": "1.0"
+    },
+    "host": "localhost:8080", 
+    "basePath": "/",
+    "paths": {
+      "/": {
+        "get": {
+          "description": "Catch-all route for undefined paths",
+          "tags": [
+            "Status"
+          ],
+          "summary": "Default Route",
+          "responses": {
+            "404": {
+              "description": "Default 404 - Path not handled",
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "/bad": {
+        "get": {
+          "description": "Returns HTTP 400 Bad Request",
+          "produces": [
+            "application/json"
+          ],
+          "tags": [
+            "Status"
+          ],
+          "summary": "Bad Request",
+          "parameters": [
+            {
+              "type": "string",
+              "description": "Client identifier for tracking",
+              "name": "X-Client-ID",
+              "in": "header",
+              "required": true
+            }
+          ],
+          "responses": {
+            "400": {
+              "description": "400 Bad Request",
+              "schema": {
+                "type": "string"
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "/notfound": {
+        "get": {
+          "description": "Returns HTTP 404 Not Found",
+          "produces": [
+            "application/json"
+          ],
+          "tags": [
+            "Status"
+          ],
+          "summary": "Not Found",
+          "parameters": [
+            {
+              "type": "string",
+              "description": "Client identifier for tracking",
+              "name": "X-Client-ID",
+              "in": "header",
+              "required": true
+            }
+          ],
+          "responses": {
+            "401": {
+              "description": "Unauthorized",
+              "schema": {
+                "type": "string"
+              }
+            },
+            "404": {
+              "description": "404 Not Found",
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "/ok": {
+        "get": {
+          "description": "Returns HTTP 200 OK",
+          "produces": [
+            "application/json"
+          ],
+          "tags": [
+            "Status"
+          ],
+          "summary": "OK Response",
+          "parameters": [
+            {
+              "type": "string",
+              "description": "Client identifier for tracking",
+              "name": "X-Client-ID",
+              "in": "header",
+              "required": true
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "200 OK",
+              "schema": {
+                "type": "string"
+              },
+              "headers": {
+                "Authorization": {
+                  "type": "string",
+                  "description": "JWT token for authenticated requests"
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "/routes": {
+        "get": {
+          "description": "Returns a list of all registered API endpoints",
+          "produces": [
+            "application/json"
+          ],
+          "tags": [
+            "Meta"
+          ],
+          "summary": "List Routes",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/main.Route"
+                }
+              }
+            }
+          }
+        }
+      },
+      "/swagger": {
+        "get": {
+          "description": "Returns the raw swagger.yaml file",
+          "produces": [
+            "application/json"
+          ],
+          "tags": [
+            "Meta"
+          ],
+          "summary": "Serve Swagger Spec",
+          "responses": {
+            "200": {
+              "description": "Swagger YAML",
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "/unauthorized": {
+        "get": {
+          "description": "Returns HTTP 401 Unauthorized",
+          "tags": [
+            "Status"
+          ],
+          "summary": "Unauthorized",
+          "responses": {
+            "401": {
+              "description": "401 Unauthorized",
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "main.Route": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }

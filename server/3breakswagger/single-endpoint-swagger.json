@@ -1,0 +1,57 @@
+{
+  "paths": {
+    "/ok": {
+      "get": {
+        "description": "Returns HTTP 200 OK",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Status"
+        ],
+        "summary": "OK Response",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Client identifier for tracking",
+            "name": "X-Client-ID",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 OK",
+            "schema": {
+              "type": "string"
+            },
+            "headers": {
+              "Authorization": {
+                "type": "string",
+                "description": "JWT token for authenticated requests"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample API using net/http",
+    "title": "My API",
+    "contact": {},
+    "version": "1.0"
+  },
+  "host": "localhost:8081",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ]
+}
